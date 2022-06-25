@@ -1,0 +1,223 @@
+<script type="text/javascript">
+    let prod = +{javascript.0.solar.current_production};
+    let bat = +Math.round({javascript.0.solar.toBattery});
+    let grid = +Math.round({modbus.0.holdingRegisters.200.40087_W} * -1);
+    let house = +Math.round({javascript.0.solar.curConsumptionHouse});
+    let car = +Math.round({mqtt.0.wattpilot.properties.nrg_ptotal.state});
+    let carChSt = {vw-connect.0.TMBJC7NY9NF038592.status.charging.status.battery.stateOfChargeInPercent};
+    let batChSt = {modbus.0.holdingRegisters.1.40351_ChaState};
+    let batStatus = {modbus.0.holdingRegisters.1.40354_ChaSt};
+
+
+    function calcCircleSize(type, value){
+        value = Math.abs(value);
+        var maxSize = 10;
+        var maxVal = 0;
+        var z = 2
+        var res = {};
+        
+        switch(type){
+            case 'prod':
+                maxVal = 17000;
+                res.aniElement = 'caP';
+                res.circleElement = 'cP';
+                break;
+            case 'bat':
+                maxVal = 8000;
+                res.aniElement = 'caB';
+                res.circleElement = 'cB';
+                break;
+            case 'grid':
+                maxVal = 12000;
+                res.aniElement = 'caG';
+                res.circleElement = 'cG';
+                break;
+            case 'house':
+                maxVal = 10000;
+                res.aniElement = 'caH';
+                res.circleElement = 'cH';
+                break;
+            case 'car':
+                maxVal = 11000;
+                res.aniElement = 'caC';
+                res.circleElement = 'cC';
+                break;                
+        }
+        
+        z = Math.round(value/maxVal*10);
+        if(z<3){
+            res.size = 3;
+            res.duration = 2;
+            res.begin = 0.66;
+        } else if(z<7){
+            res.size = z;
+            res.duration = 1.5;
+            res.begin = 0.5;
+        }  else if(z<=10){
+            res.size = z;
+            res.duration = 1;
+            res.begin = 0.33;
+        } else if(z>10){
+            res.size = 10;
+            res.duration = 1;
+            res.begin = 0.33;
+        } 
+
+        
+        return res;
+        
+    }
+    
+    function setCircleSizeAndSpeed(type, value, path){
+        var opt = calcCircleSize(type, value);
+        var animationElement = opt.aniElement;
+        var circleElement = opt.circleElement;
+
+        
+        document.getElementById(animationElement + '1').setAttribute("path", path);
+        document.getElementById(animationElement + '2').setAttribute("path", path);
+        document.getElementById(animationElement + '3').setAttribute("path", path);
+        document.getElementById(animationElement + '1').setAttribute("dur", opt.duration);
+        document.getElementById(animationElement + '2').setAttribute("dur", opt.duration);
+        document.getElementById(animationElement + '3').setAttribute("dur", opt.duration);
+        document.getElementById(animationElement + '1').setAttribute("begin", 0);
+        document.getElementById(animationElement + '2').setAttribute("begin", opt.begin);
+        document.getElementById(animationElement + '3').setAttribute("begin", opt.begin * 2);
+        
+        document.getElementById(circleElement + '1').setAttribute("r", opt.size);
+        document.getElementById(circleElement + '2').setAttribute("r", opt.size);
+        document.getElementById(circleElement + '3').setAttribute("r", opt.size);            
+    }
+    
+    function formatWattNumber(val){
+        
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+        
+        var res = {};
+        res.val = 0;
+        res.unit = 'W';
+        
+        if (val > 1000){
+           res.val = precisionRound(val/1000, 2);
+           res.unit = 'kW';
+        } else {
+            res.val = val;
+            res.unit = 'W';
+        }
+        
+        return res;
+    }
+    
+    function setTextValues(){
+        var objWN = {};
+        
+        objWN = formatWattNumber(prod);
+        document.getElementById('wattProd').textContent = objWN.val + ' ' + objWN.unit;
+        objWN = formatWattNumber(grid);
+        document.getElementById('wattGrid').textContent = objWN.val + ' ' + objWN.unit;
+        objWN = formatWattNumber(bat);
+        document.getElementById('wattBat').textContent = objWN.val + ' ' + objWN.unit;
+        objWN = formatWattNumber(house);
+        document.getElementById('wattHouse').textContent = objWN.val + ' ' + objWN.unit;
+        objWN = formatWattNumber(car);
+        document.getElementById('wattCar').textContent = objWN.val + ' ' + objWN.unit;
+        document.getElementById('percCar').textContent = carChSt.toString() + "%";
+        document.getElementById('percBat').textContent = batChSt.toString() + "%";
+    }
+    
+    function setBatterySVG(batVal){
+        let colEmpty = '#F3F3F3';
+        let colGreen = '#039442';
+        let colOrange = '#ffdb78';
+        let coldDarkOrange = '#ff5e08';
+        let colRed = '#bd1b02';
+
+        var col = colEmpty;
+        var nrSeg = 1;
+        
+        if (batStatus == 1){
+            document.getElementById('batOnOff').setAttribute("fill", colRed);   
+        } else {
+            document.getElementById('batOnOff').setAttribute("fill", '#00cc00');
+        }
+        
+        if(batVal < 10){
+            col = colRed;
+            nrSeg = 0;
+        } else if (batVal < 35) {
+            col = coldDarkOrange;
+            nrSeg = 1;
+        } else if (batVal < 75) {
+            col = colOrange;
+            nrSeg = 2;
+        } else {
+            col = colGreen;
+            nrSeg = 3;            
+        }
+        
+        for(var i=0; i<=nrSeg; i++){
+            if(i<=nrSeg){
+                document.getElementById('batE' + i).setAttribute("fill", col);
+            } else {
+                document.getElementById('batE' + i).setAttribute("fill", colEmpty);
+            }
+        }
+        
+    }
+
+    var pathProd = "M0,0 0 135";
+    if (prod > 100) {
+        pathProd = "M0,0 0 135";
+    }else {
+        pathProd = "M0,0";
+    }
+    
+    var pathGrid = "M0,0 135 75";
+    if (grid == 0) {
+        pathGrid = "M0,0";
+    } else if (grid < 0) {
+        pathGrid = "M0,0 135 75";
+    } else {
+        pathGrid = "M135,75 0 0";
+    }    
+    
+    var pathBat = "M0,0 135 -100";
+    if (batStatus == 1) bat = 0; //if Battery Off then set Value = 0
+    if (bat == 0) {
+        pathBat = "M0,0";
+    } else if(bat < 0) {
+        pathBat = "M0,0 135 -100";
+    } else {
+        pathBat = "M135,-100 0 0";
+    }
+    
+    var pathHouse = "M0,0 -120 75";
+    if (house > 0) {
+        pathHouse = "M-120,75 0 0";
+    }else {
+        pathHouse = "M0,0";
+    }    
+    
+    var pathCar = "M-120,-100 0 0";
+    if (car > 0) {
+        pathCar = "M-120,-100 0 0";
+    } else {
+        pathCar = "M0,0";
+    }
+
+
+
+    setCircleSizeAndSpeed('prod', prod, pathProd);
+    setCircleSizeAndSpeed('bat', bat, pathBat);
+    setCircleSizeAndSpeed('house', house, pathHouse);
+    setCircleSizeAndSpeed('car', car, pathCar);
+    setCircleSizeAndSpeed('grid', grid, pathGrid);
+    setTextValues();
+    setBatterySVG(batChSt);
+    
+    
+
+</script>
