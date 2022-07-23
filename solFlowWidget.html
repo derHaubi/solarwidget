@@ -3,7 +3,13 @@
         stroke-width: 1;
         stroke:#78828C;
     }
+
+    .lineElement {
+        fill: #000;
+        stroke: #bfbfbf;
+    }
 </style>
+
 <svg viewBox="0 0 345 345" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
 
     <defs>
@@ -23,7 +29,7 @@
             <circle id="batOnOff" cx="4" cy="4" r="3" stroke="#c3c3c3" fill="#00cc00"/>
         </g>
         
-        <g id="inverter">
+        <g id="g_inverter">
             <circle id="cInv" r="30" stroke="#c3c3c3" fill="#FFFFFF"></circle>
             <image href="/vis.0/Strom/img/wechselrichter.png" 
             x="-19" 
@@ -34,7 +40,7 @@
             /> 
         </g>
         
-        <g id="solar">
+        <g id="g_production">
             <circle id="cSolar" r="40" stroke="#E0BA34" fill="#FFFDF4"></circle>
             <image href="/vis.0/Strom/img/solar.png" 
             x="-20" 
@@ -46,7 +52,7 @@
             />
         </g>
         
-        <g id="grid">
+        <g id="g_grid">
             <circle id="cGrid" r="40" stroke="#474747" fill="#F3F3F3"></circle>
             <image href="/vis.0/Strom/img/grid.png" 
             x="-25" 
@@ -58,13 +64,13 @@
             />
         </g>
         
-        <g id="battery">
+        <g id="g_battery">
             <circle id="cBattery" r="40" stroke="#6CBE58" fill="#EFFAEC"></circle>
             <use xlink:href="#bat_symbol" x="-13" y="-25"/>
             <text id="percBat" x="0" y="30" text-anchor="middle" font-size="small" fill="#03152C">100%</text>
         </g>        
         
-        <g id="house">
+        <g id="g_house">
             <circle id="cHouse" r="40" stroke="#70AFCD" fill="#F4F9FB"></circle>
             <image href="/vis.0/Strom/img/haus.png" 
             x="-25" 
@@ -76,7 +82,7 @@
             />
         </g>          
         
-        <g id="car">
+        <g id="g_car">
             <circle id="cCar" r="40" stroke="#78828C" fill="#ffffff"></circle>
             <image href="/vis.0/Strom/img/enyaq.png" 
             x="-40" 
@@ -88,200 +94,228 @@
         </g>
     </defs>
     
-     <line id="lineProd" fill="#000" stroke="#bfbfbf" x1="180" y1="45" x2="180" y2="200"></line>
-     <line id="lineGrid" fill="#000" stroke="#bfbfbf" x1="45" y1="125" x2="180" y2="200"></line> 
-     <line id="lineBat" fill="#000" stroke="#bfbfbf" x1="45" y1="300" x2="180" y2="200"></line>
-     <line id="lineHouse" fill="#000" stroke="#bfbfbf" x1="300" y1="125" x2="180" y2="200"></line>
-     <line id="lineCar" fill="#000" stroke="#bfbfbf" x1="300" y1="300" x2="180" y2="200"></line>
+     <line id="prod_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
+     <line id="grid_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line> 
+     <line id="bat_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
+     <line id="house_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
+     <line id="car_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      
-    <circle id="cP1" r="7" cx="180" cy="45" fill="#E0BA34">
-        <animateMotion id="caP1" path="M0,0 0 135" dur="1.5s" repeatCount="indefinite" />
+     <circle id="prod_circle1" r="7" cx="180" cy="45" fill="#E0BA34" visibility="hidden">
+        <animateMotion path="M0,0 0 135" dur="1.5s" repeatCount="indefinite" />
     </circle>
-    <circle id="cP2" r="7" cx="180" cy="45" fill="#E0BA34">
-        <animateMotion id="caP2" path="M0,0 0 135" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
+
+    <circle id="grid_circle1" r="7" cx="45" cy="125" fill="#474747" visibility="hidden">
+        <animateMotion path="M0,0 135 75" dur="1.5s" repeatCount="indefinite" />
     </circle>
-    <circle id="cP3" r="7" cx="180" cy="45" fill="#E0BA34">
-        <animateMotion id="caP3" path="M0,0 0 135" dur="1.5s" begin="1s"  repeatCount="indefinite" />
+
+    <circle id="bat_circle1" r="7" cx="45" cy="300" fill="#6CBE58" visibility="hidden">
+        <animateMotion path="M0,0 135 -100" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+
+    <circle id="house_circle1" r="7" cx="300" cy="125" fill="#70AFCD" visibility="hidden">
+        <animateMotion path="M0,0 -120 75" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+
+    <circle id="car_circle1" r="7" cx="300" cy="300" fill="#78828C" visibility="hidden">
+        <animateMotion path="M0,0 -120 -100" dur="1.5s" repeatCount="indefinite" />
     </circle>
     
-    <circle id="cG1" r="7" cx="45" cy="125" fill="#474747">
-        <animateMotion id="caG1" path="M0,0 135 75" dur="1.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cG2" r="7" cx="45" cy="125" fill="#474747">
-        <animateMotion id="caG2" path="M0,0 135 75" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cG3" r="7" cx="45" cy="125" fill="#474747">
-        <animateMotion id="caG3" path="M0,0 135 75" dur="1.5s" begin="1s" repeatCount="indefinite" />
-    </circle>      
-    
-    <circle id="cB1" r="7" cx="45" cy="300" fill="#6CBE58">
-        <animateMotion id="caB1" path="M0,0 135 -100" dur="1.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cB2" r="7" cx="45" cy="300" fill="#6CBE58">
-        <animateMotion id="caB2" path="M0,0 135 -100" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cB3" r="7" cx="45" cy="300" fill="#6CBE58">
-        <animateMotion id="caB3" path="M0,0 135 -100" dur="1.5s" begin="1s" repeatCount="indefinite" />
-    </circle>
 
+    <use xlink:href="#g_inverter" id="inv_group" x="180" y="200" visibility="hidden"/>
+    <use xlink:href="#g_production" id="prod_group" x="180" y="45" visibility="hidden"/>
+    <use xlink:href="#g_grid" id="grid_group" x="45" y="125" visibility="hidden"/>
+    <use xlink:href="#g_battery" id="bat_group" x="45" y="300" visibility="hidden"/>
+    <use xlink:href="#g_house" id="house_group" x="300" y="125" visibility="hidden"/>
+    <use xlink:href="#g_car" id="car_group" x="300" y="300" visibility="hidden"/>
 
-    <circle id="cH1" r="7" cx="300" cy="125" fill="#70AFCD">
-        <animateMotion id="caH1" path="M0,0 -120 75" dur="1.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cH2" r="7" cx="300" cy="125" fill="#70AFCD">
-        <animateMotion id="caH2" path="M0,0 -120 75" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cH3" r="7" cx="300" cy="125" fill="#70AFCD">
-        <animateMotion id="caH3" path="M0,0 -120 75" dur="1.5s" begin="1s" repeatCount="indefinite" />
-    </circle>
-
-
-    <circle id="cC1" r="7" cx="300" cy="300" fill="#78828C">
-        <animateMotion id="caC1" path="M0,0 -120 -100" dur="1.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cC2" r="7" cx="300" cy="300" fill="#78828C">
-        <animateMotion id="caC2" path="M0,0 -120 -100" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
-    </circle>
-    <circle id="cC3" r="7" cx="300" cy="300" fill="#78828C">
-        <animateMotion id="caC3" path="M0,0 -120 -100" dur="1.5s" begin="1s" repeatCount="indefinite" />
-    </circle>
-    
-    
-    
-
-    <use xlink:href="#inverter" x="180" y="200"/>
-    <use xlink:href="#solar" x="180" y="45"/>
-    <use xlink:href="#grid" x="45" y="125"/>
-    <use xlink:href="#battery" x="45" y="300"/>
-    <use xlink:href="#house" x="300" y="125"/>
-    <use xlink:href="#car" x="300" y="300"/>
-
-    <text id="wattProd" x="180" y="65" text-anchor="middle" font-size="small" fill="#03152C">10</text>    
-    <text id="wattGrid" x="45" y="80" text-anchor="middle" font-size="small" fill="#03152C" >2500 W</text>
-    <text id="wattHouse" x="300" y="80" text-anchor="middle" font-size="small" fill="#03152C" >750 W</text>
-    <text id="wattBat" x="45" y="255" text-anchor="middle" font-size="small" fill="#03152C">100 W</text>
-    <text id="wattCar" x="300" y="255" text-anchor="middle" font-size="small" fill="#03152C" >0 W</text>
-    <text id="percCar" x="300" y="330" text-anchor="middle" font-size="small" fill="#03152C">66%</text>
+    <text id="prod_text_watt" x="180" y="65" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">--</text>    
+    <text id="grid_text_watt" x="45" y="80" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C" >--- W</text>
+    <text id="house_text_watt" x="300" y="80" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C" >--- W</text>
+    <text id="bat_text_watt" x="45" y="255" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">-- W</text>
+    <text id="car_text_watt" x="300" y="255" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C" >-- W</text>
+    <text id="car_text_perc" x="300" y="330" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">-%</text>
 
 </svg>
 
 <script type="text/javascript">
     
     (function(){
-           let objIDs = [
-            'javascript.0.solar.current_production',
-            'javascript.0.solar.toBattery',
-            'modbus.0.holdingRegisters.200.40087_W',
-            'javascript.0.solar.curConsumptionHouse',
-            'mqtt.0.wattpilot.properties.nrg_ptotal.state',
-            'vw-connect.0.TMBJC7NY9NF038592.status.charging.status.battery.stateOfChargeInPercent',
-            'modbus.0.holdingRegisters.1.40351_ChaState',
-            'modbus.0.holdingRegisters.1.40354_ChaSt'
-            ];
+        //define Array of Objects which values are gotten from server
+        let objIDs = [
+        'javascript.0.solar.current_production',
+        'javascript.0.solar.toBattery',
+        'modbus.0.holdingRegisters.200.40087_W',
+        'javascript.0.solar.curConsumptionHouse',
+        'mqtt.0.wattpilot.properties.nrg_ptotal.state',
+        'vw-connect.0.XXXXXXXXX.status.charging.status.battery.stateOfChargeInPercent',
+        'modbus.0.holdingRegisters.1.40351_ChaState',
+        'modbus.0.holdingRegisters.1.40354_ChaSt'
+        ];
             
-    
-        var prod = 0;
-        var bat = 0;
-        var grid = 0;
-        var house = 0;
-        var car = 0;
-        var carChSt = 0;
-        var batChSt = 0;
-        var batStatus = 0;
-        
-        /*
-        let objID = ['javascript.0.solar.current_production','modbus.0.holdingRegisters.200.40087_W'];
-        servConn.getStates(objID, (error, states) => {
-            //let stateValue = states[objID].val;
-            console.log(states);
-            //console.log("Production: " + stateValue);
-        });
-        */
-        
-     console.log("new script");
+        var allFlowObjects = ['inv', 'prod', 'grid', 'bat', 'house', 'car'];
+        var flowValues = { //initialize values used in the widget
+            "prod": 0,
+            "bat": 0,
+            "grid": 0,
+            "house": 0,
+            "car": 0,
+            "carChSt": 0,
+            "batChSt": 0,
+            "batStatus": 0
+        }    
+
+        //define Widget-Parameters
+        var wP = {};
+        wP.nrAnimCircles = 3; //currently NOT changable
+        wP.pos = {
+            "invX": 180,
+            "invY": 200,
+            "prodX": 180,
+            "prodY": 45,
+            "gridX": 45,
+            "gridY": 125,
+            "batX": 45,
+            "batY": 300,
+            "houseX": 300,
+            "houseY": 125,
+            "carX": 300,
+            "carY": 300,           
+        };
+        wP.textPosDeltas = {
+            "prod_text_watt": [0, 20],
+            "grid_text_watt": [0, -45],
+            "bat_text_watt": [0, -45],
+            "house_text_watt": [0, -45],
+            "car_text_watt": [0, -45],
+            "car_text_perc": [0, 30],
+        };
+        wP.maxVals = {
+            "prod": 17000,
+            "grid": 12000,
+            "bat": 8000,
+            "house": 10000,
+            "car": 11000
+        };
+        wP.pathes = {};
+        calculatePaths();
+
+        function calculatePaths(){
+            for(var i=1;i<allFlowObjects.length;i++){
+                var type = allFlowObjects[i];
+                wP.pathes[type] = {};
+                wP.pathes[type].cur = "M0,0 " + (wP.pos.invX - wP.pos[type + 'X']).toString() + ' ' + (wP.pos.invY  - wP.pos[type + 'Y']).toString();
+                wP.pathes[type].pos = "M0,0 " + (wP.pos.invX - wP.pos[type + 'X']).toString() + ' ' + (wP.pos.invY - wP.pos[type + 'Y']).toString();
+                wP.pathes[type].neg = "M" + (wP.pos.invX - wP.pos[type + 'X']).toString() + ',' + (wP.pos.invY - wP.pos[type + 'Y']).toString() + ' 0 0';  
+            }
+        }
+
+        function initSVG(){
+            //Position and unhide SVG-Object-Groups
+            for(var i=0; i < allFlowObjects.length; i++){ 
+                var el = allFlowObjects[i];
+                document.getElementById(el + '_group').setAttribute("x", wP.pos[el+"X"]);
+                document.getElementById(el + '_group').setAttribute("y", wP.pos[el+"Y"]);
+                document.getElementById(el + '_group').setAttribute("visibility", "visible");
+            } 
+
+            //run through Loop without Inverter-Object
+            for(var i=1; i < allFlowObjects.length; i++){ // i = 1 because no line for Inverter
+                var el = allFlowObjects[i];
+                //Position and unhide Animation Lines
+                document.getElementById(el + '_line').setAttribute("x1", wP.pos[el+"X"]);
+                document.getElementById(el + '_line').setAttribute("y1", wP.pos[el+"Y"]);
+                document.getElementById(el + '_line').setAttribute("x2", wP.pos.invX);
+                document.getElementById(el + '_line').setAttribute("y2", wP.pos.invY);
+                document.getElementById(el + '_line').setAttribute("visibility", "visible");
+            
+                //Position and unhide given Set 1 of AnimationCircles - others will be autogenerated afterwards
+                document.getElementById(el + '_circle1').setAttribute("cx", wP.pos[el+"X"]);
+                document.getElementById(el + '_circle1').setAttribute("cy", wP.pos[el+"Y"]);
+                document.getElementById(el + '_circle1').setAttribute("visibility", "visible");
+
+                //Position and unhide SVG-Text-Objects
+                document.getElementById(el + '_text_watt').setAttribute("x", wP.pos[el+"X"] + wP.textPosDeltas[el + '_text_watt'][0]);
+                document.getElementById(el + '_text_watt').setAttribute("y", wP.pos[el+"Y"] + wP.textPosDeltas[el + '_text_watt'][1]);
+                document.getElementById(el + '_text_watt').setAttribute("visibility", "visible");
+                if(el == 'car'){
+                    document.getElementById(el + '_text_perc').setAttribute("x", wP.pos[el+"X"] + wP.textPosDeltas[el + '_text_perc'][0]);
+                    document.getElementById(el + '_text_perc').setAttribute("y", wP.pos[el+"Y"] + wP.textPosDeltas[el + '_text_perc'][1]);
+                    document.getElementById(el + '_text_perc').setAttribute("visibility", "visible");  
+                }
+            }
+           
+        }
         
         function getPHServerValues(){
             servConn.getStates(objIDs, (error, states) => {
-                console.log(states);
+                //console.log(states);
                 for(var i=0; i < objIDs.length; i++){
-                    console.log(i + ' - ' + objIDs[i] + ' - ' + states[objIDs[i]].val);
+                    //console.log(i + ' - ' + objIDs[i] + ' - ' + states[objIDs[i]].val);
                     switch(i) {
                         case 0:
-                            prod = +states[objIDs[i]].val;
+                            flowValues.prod = +states[objIDs[i]].val;
                             break;
                         case 1:
-                            bat = +Math.round(states[objIDs[i]].val);
+                            flowValues.bat = +Math.round(states[objIDs[i]].val);
                             break;
                         case 2:
-                            grid = +Math.round(states[objIDs[i]].val) * -1;
+                            flowValues.grid = +Math.round(states[objIDs[i]].val) * -1;
                             break;
                         case 3:
-                            house = +Math.round(states[objIDs[i]].val);
+                            flowValues.house = +Math.round(states[objIDs[i]].val);
                             break;
                         case 4:
-                            car = +Math.round(states[objIDs[i]].val);
+                            flowValues.car = +Math.round(states[objIDs[i]].val);
                             break;
                         case 5:
-                            carChSt = states[objIDs[i]].val;
+                            flowValues.carChSt = states[objIDs[i]].val;
                             break;
                         case 6:
-                            batChSt = states[objIDs[i]].val;
+                            flowValues.batChSt = states[objIDs[i]].val;
                             break;
                         case 7:
-                            batStatus = states[objIDs[i]].val;
+                            flowValues.batStatus = states[objIDs[i]].val;
                             break;
                     }
                  }
                  
-                recalcPathes();
-                setCircleSizeAndSpeed('prod', prod, pathProd);
-                setCircleSizeAndSpeed('bat', bat, pathBat);
-                setCircleSizeAndSpeed('house', house, pathHouse);
-                setCircleSizeAndSpeed('car', car, pathCar);
-                setCircleSizeAndSpeed('grid', grid, pathGrid);
+                 if(flowValues.batStatus == 1) {flowValues.bat = 0}; //if Battery Off then force value for bat to be 0
+
+                setPathes();
+                setCircleSizeAndSpeed('prod', flowValues.prod, wP.pathes.prod.cur);
+                setCircleSizeAndSpeed('bat', flowValues.bat, wP.pathes.bat.cur);
+                setCircleSizeAndSpeed('house', flowValues.house, wP.pathes.house.cur);
+                setCircleSizeAndSpeed('car', flowValues.car, wP.pathes.car.cur);
+                setCircleSizeAndSpeed('grid', flowValues.grid, wP.pathes.grid.cur);
                 setTextValues();
-                setBatterySVG(batChSt);
+                setBatterySVG(flowValues.batChSt);
             });
         }
         
-        
+        function addAnimCircles(number){
+            for(var i=1;i<allFlowObjects.length;i++){
+                var type = allFlowObjects[i];
+                var el = document.getElementById(type + '_circle1');
+                
+                for(z=2;z<=number;z++){
+                    var elCopy = el.cloneNode(true);
+                    el.id = type + '_circle' + z.toString();
+                    el.parentNode.insertBefore(elCopy, el.nextSibling); 
+                }
+            }
+            
+        }       
     
         function calcCircleSize(type, value){
             value = Math.abs(value);
             var maxSize = 10;
-            var maxVal = 0;
+            var maxVal = wP.maxVals[type];
             var z = 2
             var res = {};
             
-            switch(type){
-                case 'prod':
-                    maxVal = 17000;
-                    res.aniElement = 'caP';
-                    res.circleElement = 'cP';
-                    break;
-                case 'bat':
-                    maxVal = 8000;
-                    res.aniElement = 'caB';
-                    res.circleElement = 'cB';
-                    break;
-                case 'grid':
-                    maxVal = 12000;
-                    res.aniElement = 'caG';
-                    res.circleElement = 'cG';
-                    break;
-                case 'house':
-                    maxVal = 10000;
-                    res.aniElement = 'caH';
-                    res.circleElement = 'cH';
-                    break;
-                case 'car':
-                    maxVal = 11000;
-                    res.aniElement = 'caC';
-                    res.circleElement = 'cC';
-                    break;                
-            }
-            
-            z = Math.round(value/maxVal*10);
+            //find thresholds for circle Sizes - currently 3 different sizes
+            //also the duration is calculated assuming we have 3 circles running per line
+            z = Math.round(value/maxVal*10); //
             if(z<3){
                 res.size = 3;
                 res.duration = 2;
@@ -294,36 +328,29 @@
                 res.size = z;
                 res.duration = 1;
                 res.begin = 0.33;
-            } else if(z>10){
+            } else if(z>10){ //just save my ass :)
                 res.size = 10;
                 res.duration = 1;
                 res.begin = 0.33;
             } 
     
-            
-            return res;
-            
+            return res; 
         }
         
         function setCircleSizeAndSpeed(type, value, path){
             var opt = calcCircleSize(type, value);
             var animationElement = opt.aniElement;
-            var circleElement = opt.circleElement;
-    
-            
-            document.getElementById(animationElement + '1').setAttribute("path", path);
-            document.getElementById(animationElement + '2').setAttribute("path", path);
-            document.getElementById(animationElement + '3').setAttribute("path", path);
-            document.getElementById(animationElement + '1').setAttribute("dur", opt.duration + 's');
-            document.getElementById(animationElement + '2').setAttribute("dur", opt.duration + 's');
-            document.getElementById(animationElement + '3').setAttribute("dur", opt.duration + 's');
-            document.getElementById(animationElement + '1').setAttribute("begin", 0 + 's');
-            document.getElementById(animationElement + '2').setAttribute("begin", opt.begin + 's');
-            document.getElementById(animationElement + '3').setAttribute("begin", (opt.begin * 2) + 's');
-            
-            document.getElementById(circleElement + '1').setAttribute("r", opt.size);
-            document.getElementById(circleElement + '2').setAttribute("r", opt.size);
-            document.getElementById(circleElement + '3').setAttribute("r", opt.size);            
+            //var circleElement = opt.circleElement;
+            var circleElement = type + '_circle';
+            var beg = 0;
+            for(var i=1;i<=3;i++){
+                document.getElementById(circleElement + i.toString()).setAttribute("r", opt.size); 
+                document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("path", path);
+                document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("dur", opt.duration + 's');
+                document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("begin", beg + 's');
+                
+                beg = opt.begin * i;
+            }
         }
         
         function formatWattNumber(val){
@@ -351,18 +378,18 @@
         function setTextValues(){
             var objWN = {};
             
-            objWN = formatWattNumber(prod);
-            document.getElementById('wattProd').textContent = objWN.val + ' ' + objWN.unit;
-            objWN = formatWattNumber(grid);
-            document.getElementById('wattGrid').textContent = objWN.val + ' ' + objWN.unit;
-            objWN = formatWattNumber(bat);
-            document.getElementById('wattBat').textContent = objWN.val + ' ' + objWN.unit;
-            objWN = formatWattNumber(house);
-            document.getElementById('wattHouse').textContent = objWN.val + ' ' + objWN.unit;
-            objWN = formatWattNumber(car);
-            document.getElementById('wattCar').textContent = objWN.val + ' ' + objWN.unit;
-            document.getElementById('percCar').textContent = carChSt.toString() + "%";
-            document.getElementById('percBat').textContent = batChSt.toString() + "%";
+            objWN = formatWattNumber(flowValues.prod);
+            document.getElementById('prod_text_watt').textContent = objWN.val + ' ' + objWN.unit;
+            objWN = formatWattNumber(flowValues.grid);
+            document.getElementById('grid_text_watt').textContent = objWN.val + ' ' + objWN.unit;
+            objWN = formatWattNumber(flowValues.bat);
+            document.getElementById('bat_text_watt').textContent = objWN.val + ' ' + objWN.unit;
+            objWN = formatWattNumber(flowValues.house);
+            document.getElementById('house_text_watt').textContent = objWN.val + ' ' + objWN.unit;
+            objWN = formatWattNumber(flowValues.car);
+            document.getElementById('car_text_watt').textContent = objWN.val + ' ' + objWN.unit;
+            document.getElementById('car_text_perc').textContent = flowValues.carChSt.toString() + "%";
+            document.getElementById('percBat').textContent = flowValues.batChSt.toString() + "%";
         }
         
         function setBatterySVG(batVal){
@@ -375,7 +402,7 @@
             var col = colEmpty;
             var nrSeg = 1;
             
-            if (batStatus == 1){
+            if (flowValues.batStatus == 1){
                 document.getElementById('batOnOff').setAttribute("fill", colRed);   
             } else {
                 document.getElementById('batOnOff').setAttribute("fill", '#00cc00');
@@ -404,57 +431,33 @@
             }
             
         }
+        
+        function setPathes(){
+            for (var i=1;i<allFlowObjects.length;i++){
+                var typ = allFlowObjects[i];
+                var val = flowValues[typ];
+                
+                if(typ == 'prod'){ //if it's Value of Production then we need to negotiate to have correct direction
+                    val = val * -1;
+                }
+                
+                if(val == 0) {
+                    wP.pathes[typ].cur = "M0,0";
+                } else if (val < 0) {
+                    wP.pathes[typ].cur = wP.pathes[typ].pos;
+                } else {
+                    wP.pathes[typ].cur = wP.pathes[typ].neg;
+                }   
+
+                //console.log('Path of ' + typ + ': ' + wP.pathes[typ].pos);
+            }
     
-        var pathProd = "M0,0 0 135";
-        var pathGrid = "M0,0 135 75";
-        var pathBat = "M0,0 135 -100";
-        var pathHouse = "M0,0 -120 75";
-        var pathCar = "M-120,-100 0 0";    
-        
-        
-        function recalcPathes(){
-            if (prod > 100) {
-                pathProd = "M0,0 0 135";
-            }else {
-                pathProd = "M0,0";
-            }
-            
-            
-            if (grid == 0) {
-                pathGrid = "M0,0";
-            } else if (grid < 0) {
-                pathGrid = "M0,0 135 75";
-            } else {
-                pathGrid = "M135,75 0 0";
-            }    
-            
-            
-            if (batStatus == 1) bat = 0; //if Battery Off then set Value = 0
-            if (bat == 0) {
-                pathBat = "M0,0";
-            } else if(bat < 0) {
-                pathBat = "M0,0 135 -100";
-            } else {
-                pathBat = "M135,-100 0 0";
-            }
-            
-         
-            if (house > 0) {
-                pathHouse = "M-120,75 0 0";
-            }else {
-                pathHouse = "M0,0";
-            }    
-            
-        
-            if (car > 0) {
-                pathCar = "M-120,-100 0 0";
-            } else {
-                pathCar = "M0,0";
-            }
         }
-    
-        getPHServerValues();
-        setInterval(getPHServerValues, 2000); 
+
+        initSVG(); //unhide and plave SVG-Objects by given Values in Variable Definition wP
+        addAnimCircles(wP.nrAnimCircles); //create copies of circle-SVGs (needed because <use> creates copies in Shadow Dom which is not accessable)
+        getPHServerValues(); //"start widget" one time manually
+        setInterval(getPHServerValues, 2000); //update widget every 2 seconds
     })();
     
 </script>
