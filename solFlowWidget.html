@@ -5,7 +5,7 @@
     }
 
     .lineElement {
-        fill: #000;
+        fill: A#000;
         stroke: #bfbfbf;
     }
 </style>
@@ -147,11 +147,11 @@
         'modbus.0.holdingRegisters.200.40087_W',
         'javascript.0.solar.curConsumptionHouse',
         'mqtt.0.wattpilot.properties.nrg_ptotal.state',
-        'vw-connect.0.xxxxxxxxxx.status.charging.status.battery.stateOfChargeInPercent',
+        'vw-connect.0.xxxxxxxxxxxxx.status.charging.status.battery.stateOfChargeInPercent',
         'modbus.0.holdingRegisters.1.40351_ChaState',
         'modbus.0.holdingRegisters.1.40354_ChaSt'
         ];
-            
+        
         var allFlowObjects = ['inv', 'prod', 'grid', 'bat', 'house', 'car'];
         var flowValues = { //initialize values used in the widget
             "prod": 0,
@@ -164,7 +164,7 @@
             "batStatus": 0
         }    
 
-        //define Widget-Parameters
+        //define Widget-Parameters - described in GitHub Wiki
         var wP = {};
         wP.nrAnimCircles = 3; //currently NOT changable
         wP.pos = {
@@ -199,6 +199,12 @@
         wP.pathes = {};
         calculatePaths();
 
+        /**
+         * Calculates the Animation Pathes for the given Flow-relevant Objects
+         * Makes use of the Positions ov the Main-SVG-Objects and assumes that each Path ends
+         * within the Inverter.
+         * Result is for each Object a current path (.cur), a path for positive values (.pos) and one for negative values (.neg) e.g. 'M0,0 45 180'
+         */
         function calculatePaths(){
             for(var i=1;i<allFlowObjects.length;i++){
                 var type = allFlowObjects[i];
@@ -209,6 +215,9 @@
             }
         }
 
+        /**
+         * Used to initialize the SVG-Objects withing the Widget. This is done by setting x/y Attributes in the Objects by DOM.
+         */
         function initSVG(){
             //Position and unhide SVG-Object-Groups
             for(var i=0; i < allFlowObjects.length; i++){ 
@@ -246,7 +255,12 @@
            
         }
         
-        function getPHServerValues(){
+        /**
+         * Function gets the Values for the Data-Points given in Array objIDs. This is a function which can only be used when the widget
+         * is living in ioBroker VIS.
+         * It is getting the Values and then recalculating Pathes, Circle Sizes and setting Text-SVGs
+         */
+        function getServerValues(){
             servConn.getStates(objIDs, (error, states) => {
                 //console.log(states);
                 for(var i=0; i < objIDs.length; i++){
@@ -292,6 +306,13 @@
             });
         }
         
+        /**
+         * Function used to clone the Animation-Circle-SVGs directly into DOM. Needed because the SVG copying like <use> write the copies into the "Shadow-Dom".
+         * The Problem then is, that we are not able to edit for example then AnimationPath via DOM anymore.
+         * This Function is called only once, when the Widget is intilaized.
+         * 
+         *  @number integer number of circles which should be created per FlowLine (currently set to 3 and not changeable)
+         */ 
         function addAnimCircles(number){
             for(var i=1;i<allFlowObjects.length;i++){
                 var type = allFlowObjects[i];
@@ -306,6 +327,15 @@
             
         }       
     
+        /**
+         * Helper-Function used to calculate the Size, Speed (duartion) and begin-Time of the circles running on the FlowLine. Currently delivering three different sizes,
+         * depending on Flows maximum Value and Flows current Value
+         * 
+         *  @type   string  Type of Flow (prod, bat, grid...)
+         *  @value  number  current Value gotten from the server for the sepicific Flow
+         * 
+         *  @return Object  Object with circle size, duration for animation and begin-Threshold
+         */ 
         function calcCircleSize(type, value){
             value = Math.abs(value);
             var maxSize = 10;
@@ -319,7 +349,7 @@
             if(z<3){
                 res.size = 3;
                 res.duration = 2;
-                res.begin = 0.66;
+                res.begin = 0.66; //animation speed 2 Seconds with three Circles means every 0.66 seconds a circle can start
             } else if(z<7){
                 res.size = z;
                 res.duration = 1.5;
@@ -337,6 +367,14 @@
             return res; 
         }
         
+        /**
+         * Function Used to set new CircleSize, Animation-Path and Speed for the Flow-Animation
+         * 
+         *  @type   string  Type of Flow (prod, bat, grid...)
+         *  @value  number  current Value gotten from the server for the sepicific Flow
+         *  @path   string  recalculated Path (by Value) for the given Flow (Direction or OFF)
+         * 
+         */
         function setCircleSizeAndSpeed(type, value, path){
             var opt = calcCircleSize(type, value);
             var animationElement = opt.aniElement;
@@ -353,6 +391,13 @@
             }
         }
         
+        /**
+         * Function used to format the given Watt-Values. If more than 1000W then it is deliver kW
+         * 
+         * @val     number  Value in Watt
+         * 
+         * @return  string  Value as String in Watt or kW
+         */
         function formatWattNumber(val){
             
             function precisionRound(number, precision) {
@@ -375,6 +420,10 @@
             return res;
         }
         
+        /**
+         * Function to set the Text-Values into the Text-SVG-Objects (Production Watt, Battery Watt, Grid Watt...)
+         * New Values are set directly into the Text-SVG-Object via DOM
+         */
         function setTextValues(){
             var objWN = {};
             
@@ -392,6 +441,9 @@
             document.getElementById('percBat').textContent = flowValues.batChSt.toString() + "%";
         }
         
+        /**
+         * Function to calculate and repaint the Battery-Cells in different Colors depeind on Battery Charge-Stae Value
+         */
         function setBatterySVG(batVal){
             let colEmpty = '#F3F3F3';
             let colGreen = '#039442';
@@ -432,6 +484,11 @@
             
         }
         
+        /**
+         * Function to set the recalculated Animation-Pathes. Basically it changes the Direction of how the Circles are running on the FlowLine
+         * depending on the Flow-Value.
+         * The result is written in the wP-Object and then used within Function/FunctionCall for setCircleSizeAndSpeed() 
+         */
         function setPathes(){
             for (var i=1;i<allFlowObjects.length;i++){
                 var typ = allFlowObjects[i];
@@ -454,10 +511,15 @@
     
         }
 
+        /**
+         * 
+         *  Start of Scritp Calls
+         * 
+         */
         initSVG(); //unhide and plave SVG-Objects by given Values in Variable Definition wP
         addAnimCircles(wP.nrAnimCircles); //create copies of circle-SVGs (needed because <use> creates copies in Shadow Dom which is not accessable)
-        getPHServerValues(); //"start widget" one time manually
-        setInterval(getPHServerValues, 2000); //update widget every 2 seconds
+        getServerValues(); //"start widget" one time manually
+        setInterval(getServerValues, 2000); //update widget every 2 seconds
     })();
     
 </script>
