@@ -20,3 +20,6 @@ When the Widget is loaded following Functions need to be called in given order:
 * addAnimCircles
 * getServerValues
 * setInterval(getServerValues, 2000)
+
+## Usage with ioBroker VIS
+[see Wiki-Entry](https://github.com/derHaubi/solarwidget/wiki/usage-with-ioBroker-VIS)
