@@ -1,0 +1,82 @@
+<script type="text/javascript">
+
+    // ── IMPORTANT: no {…} object literals allowed in this file ─────────────────
+    // VIS treats every {…} in the script text as a state binding to subscribe to.
+    // Use plain variables instead of objects/arrays with curly-brace syntax.
+
+    // ── VIS Bindings ────────────────────────────────────────────────────────────
+    // VIS replaces these {state.id} tokens with live values before script runs.
+    // All states are bound so VIS re-runs the script when any of them changes.
+    let activeCar    = '{javascript.0.car.pluggedCar}';
+    let carConnected = !('{fronius-wattpilot.0.carConnected}'.toLowerCase() === 'idle');
+    let carCar       = +Math.round({fronius-wattpilot.0.power});
+    let soc_enyaq    = {vw-connect.0.TMBJC7NY9NF038592.status.charging.status.battery.stateOfChargeInPercent};
+    let soc_id3      = {vw-connect.1.WVWZZZE1ZPP028522.status.batteryStatus.currentSOC_pct};
+
+    // ── Active car resolution ───────────────────────────────────────────────────
+    // Plain ternary — no object literals needed.
+    let carCarChSt = (activeCar === 'id3') ? soc_id3   : soc_enyaq;
+    let carImage   = (activeCar === 'id3') ? '/vis.0/Strom/img/id3.png' : '/vis.0/Strom/img/enyaq.png';
+
+    // ── Update car image ────────────────────────────────────────────────────────
+    function updateCarDisplay() {
+        var img = document.getElementById('carDetailImage');
+        if (img) img.setAttribute('href', carImage);
+    }
+
+    // ── Animation helpers ───────────────────────────────────────────────────────
+    // calcCarCircleSize uses module-level vars to avoid returning an object literal.
+    // Defaults cover the NaN/0 case — NaN comparisons always return false in JS
+    // so none of the if-branches would fire without these fallback values.
+    var circSize = 3, circDur = 2, circBegin = 0.66;
+
+    function calcCarCircleSize(value) {
+        var z = Math.round(Math.abs(+value) / 11 * 10);
+        // Ternaries instead of single-line {…} blocks — VIS's binding scanner
+        // matches any {…} on a single line and silently replaces it.
+        circSize  = z >= 10 ? 10  : z >= 3 ? z   : 3;
+        circDur   = z >= 7  ? 1   : z >= 3 ? 1.5 : 2;
+        circBegin = z >= 7  ? 0.33 : z >= 3 ? 0.5 : 0.66;
+    }
+
+    function setCarCircleSizeAndSpeed(value, path) {
+        calcCarCircleSize(value);
+        for (var i = 1; i <= 3; i++) {
+            document.getElementById('car_caC' + i).setAttribute('path',  path);
+            document.getElementById('car_caC' + i).setAttribute('dur',   circDur + 's');
+            document.getElementById('car_caC' + i).setAttribute('begin', (circBegin * (i - 1)) + 's');
+            document.getElementById('car_cC'  + i).setAttribute('r',     circSize);
+        }
+    }
+
+    function setCarTextValues() {
+        var factor  = Math.pow(10, 2);
+        var wattVal = Math.round(carCar * factor) / factor;
+        document.getElementById('carWattCar').textContent = wattVal + ' kW';
+        document.getElementById('carPercBat').textContent = carCarChSt.toString() + '%';
+    }
+
+    function setCarBatterySVG(batVal) {
+        // Ternaries only — no single-line {…} blocks (VIS binding scanner would eat them).
+        var val   = +batVal;
+        var nrSeg = val >= 75 ? 3 : val >= 35 ? 2 : val >= 10 ? 1 : 0;
+        var col   = val >= 75 ? '#039442' : val >= 35 ? '#ffdb78' : val >= 10 ? '#ff5e08' : '#bd1b02';
+        for (var i = 0; i <= 3; i++)
+            document.getElementById('carBatE' + i).setAttribute('fill', i <= nrSeg ? col : '#F3F3F3');
+    }
+
+    function showConnectionState() {
+        var ref = carConnected ? '#carConnectionConnected' : '#carConnectionBroken';
+        document.getElementById('carConnection').setAttribute('xlink:href', ref);
+    }
+
+    // ── Run ─────────────────────────────────────────────────────────────────────
+    var pathCar = (carCar > 0) ? 'M0,0 250 0' : 'M0,0';
+
+    updateCarDisplay();
+    showConnectionState();
+    setCarCircleSizeAndSpeed(carCar, pathCar);
+    setCarTextValues();
+    setCarBatterySVG(carCarChSt);
+
+</script>

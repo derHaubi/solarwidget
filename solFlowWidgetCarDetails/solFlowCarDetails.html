@@ -1,0 +1,97 @@
+<style>
+    .batElement {
+        stroke-width: 1;
+        stroke:#78828C;
+    }
+</style>
+<svg viewBox="0 0 386 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+
+    <defs>
+        <g id="carBat_symbol">
+            <rect id="carBatE4" class="batElement" x="0" y="0"  width="20" height="10" fill="#c3c3c3"/>
+            <polyline class="batElement" points="0,0 6,-6 26,-6 20,0" fill="#e6e6e6"/>
+            <polyline class="batElement" points="26,-6 26,4 20,10 20,0" fill="#e6e6e6"/>
+            <polyline class="batElement" points="26,4 26,12 20,18" fill="#e6e6e6"/>
+            <polyline class="batElement" points="26,12 26,20 20,26 " fill="#e6e6e6"/>
+            <polyline class="batElement" points="26,20 26,28 20,34 " fill="#e6e6e6"/>
+            <polyline class="batElement" points="26,28 26,32 20,38 " fill="#e6e6e6"/>
+
+            <rect id="carBatE3" class="batElement" x="0" y="10" width="20" height="8"  fill="#F3F3F3"/>
+            <rect id="carBatE2" class="batElement" x="0" y="18" width="20" height="8" fill="#F3F3F3"/>
+            <rect id="carBatE1" class="batElement" x="0" y="26" width="20" height="8" fill="#F3F3F3"/>
+            <rect id="carBatE0" class="batElement" x="0" y="34" width="20" height="4" fill="#F3F3F3"/>
+            <circle id="carBatOnOff" cx="4" cy="4" r="3" stroke="#c3c3c3" fill="#00cc00"/>
+        </g>
+        
+        <g id="carWattpilot">
+            <circle id="car_cInv" r="40" stroke="#c3c3c3" fill="#FFFFFF"></circle>
+            <image href="/vis.0/Strom/img/wattpilot.png" 
+            x="-25" 
+            y="-35" 
+            height="70"
+            preserveAspectRatio="xMinYMin meet"
+            /> 
+        </g>
+    
+        
+        <g id="carBattery">
+            <use xlink:href="#carBat_symbol" x="-13" y="-25"/>
+            <text id="carPercBat" x="0" y="30" text-anchor="middle" font-size="small" fill="#03152C">--%</text>
+        </g>        
+        
+        <g id="carCar">
+            <!-- Image first = behind; circle second = on top as a ring frame -->
+            <image id="carDetailImage"
+            href="/vis.0/Strom/img/enyaq.png"
+            x="-43"
+            y="-30"
+            width="85"
+            preserveAspectRatio="xMinYMin meet"
+            />
+            <circle id="car_cCar" r="40" stroke="#78828C" fill="none"></circle>
+        </g>
+        
+        <g id="carConnectionBroken">
+            <!-- Left cable part -->
+            <line x1="0" y1="0" x2="100" y2="0" stroke="#bfbfbf" stroke-width="2"/>
+            <circle cx="100" cy="0" r="5" fill="#bfbfbf" stroke="#78828C"/>
+            
+            <!-- Right cable part (slightly offset) -->
+            <line x1="155" y1="0" x2="255" y2="0" stroke="#bfbfbf" stroke-width="2"/>
+            <circle cx="155" cy="0" r="5" fill="#bfbfbf" stroke="#78828C"/>
+            
+            <!-- Optional: spark/disconnect symbol in the gap -->
+            <path d="M 120,-8 L 128,0 L 120,8" stroke="#ff6600" stroke-width="1.5" fill="none"/>
+            <path d="M 135,-8 L 127,0 L 135,8" stroke="#ff6600" stroke-width="1.5" fill="none"/>
+        </g>
+        
+        <g id="carConnectionConnected">
+            <line x1="0" y1="0" x2="255" y2="0" stroke="#bfbfbf" stroke-width="2"/>
+        </g>
+    </defs>
+    
+    <use id="carConnection" xlink:href="#carConnectionConnected" x="45" y="45"/>
+     
+
+    <circle id="car_cC1" r="7" cx="45" cy="45" fill="#78828C">
+        <animateMotion id="car_caC1" path="M0,0 250 0" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+    <circle id="car_cC2" r="7" cx="45" cy="45" fill="#78828C">
+        <animateMotion id="car_caC2" path="M0,0 250 0" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
+    </circle>
+    <circle id="car_cC3" r="7" cx="45" cy="45" fill="#78828C">
+        <animateMotion id="car_caC3" path="M0,0 250 0" dur="1.5s" begin="1s" repeatCount="indefinite" />
+    </circle>
+    
+    
+    
+
+    <use xlink:href="#carWattpilot" x="45" y="45"/>
+    <use xlink:href="#carBattery" x="365" y="45"/>
+    <use xlink:href="#carCar" x="300" y="45"/>
+
+
+    <text id="carWattCar" x="300" y="70" text-anchor="middle" font-size="small" fill="#03152C" >0 W</text>
+
+
+</svg>

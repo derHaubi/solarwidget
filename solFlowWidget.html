@@ -28,78 +28,80 @@
             <rect id="batE0" class="batElement" x="0" y="34" width="20" height="4" fill="#F3F3F3"/>
             <circle id="batOnOff" cx="4" cy="4" r="3" stroke="#c3c3c3" fill="#00cc00"/>
         </g>
-        
+
         <g id="g_inverter">
             <circle id="cInv" r="30" stroke="#c3c3c3" fill="#FFFFFF"></circle>
-            <image href="/vis.0/Strom/img/wechselrichter.png" 
-            x="-19" 
-            y="-20" 
-            height="40" 
+            <image href="/vis.0/Strom/img/wechselrichter.png"
+            x="-19"
+            y="-20"
+            height="40"
             width="40"
             preserveAspectRatio="xMinYMin meet"
-            /> 
+            />
         </g>
-        
+
         <g id="g_production">
             <circle id="cSolar" r="40" stroke="#E0BA34" fill="#FFFDF4"></circle>
-            <image href="/vis.0/Strom/img/solar.png" 
-            x="-20" 
-            y="-33" 
-            height="40" 
+            <image href="/vis.0/Strom/img/solar.png"
+            x="-20"
+            y="-33"
+            height="40"
             width="40"
             opacity="20%"
             preserveAspectRatio="xMinYMin meet"
             />
         </g>
-        
+
         <g id="g_grid">
             <circle id="cGrid" r="40" stroke="#474747" fill="#F3F3F3"></circle>
-            <image href="/vis.0/Strom/img/grid.png" 
-            x="-25" 
-            y="-25" 
-            height="50" 
+            <image href="/vis.0/Strom/img/grid.png"
+            x="-25"
+            y="-25"
+            height="50"
             width="50"
             opacity="75%"
             preserveAspectRatio="xMinYMin meet"
             />
         </g>
-        
+
         <g id="g_battery">
             <circle id="cBattery" r="40" stroke="#6CBE58" fill="#EFFAEC"></circle>
             <use xlink:href="#bat_symbol" x="-13" y="-25"/>
             <text id="percBat" x="0" y="30" text-anchor="middle" font-size="small" fill="#03152C">100%</text>
-        </g>        
-        
+        </g>
+
         <g id="g_house">
             <circle id="cHouse" r="40" stroke="#70AFCD" fill="#F4F9FB"></circle>
-            <image href="/vis.0/Strom/img/haus.png" 
-            x="-25" 
-            y="-25" 
-            height="50" 
+            <image href="/vis.0/Strom/img/haus.png"
+            x="-25"
+            y="-25"
+            height="50"
             width="50"
             opacity="50%"
             preserveAspectRatio="xMinYMin meet"
             />
-        </g>          
-        
+        </g>
+
         <g id="g_car">
-            <circle id="cCar" r="40" stroke="#78828C" fill="#ffffff"></circle>
-            <image href="/vis.0/Strom/img/enyaq.png" 
-            x="-40" 
-            y="-30" 
-            height="80" 
+            <!-- Image first = behind; circle second = on top as a ring frame -->
+            <image id="carImage"
+            href="/vis.0/Strom/img/enyaq.png"
+            x="-40"
+            y="-30"
+            height="80"
             width="80"
             preserveAspectRatio="xMinYMin meet"
             />
+            <circle id="cCar" r="40" stroke="#78828C" fill="none"></circle>
         </g>
     </defs>
-    
+
      <line id="prod_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
-     <line id="grid_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line> 
+     <line id="grid_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      <line id="bat_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      <line id="house_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      <line id="car_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
-     
+
      <circle id="prod_circle1" r="7" cx="180" cy="45" fill="#E0BA34" visibility="hidden">
         <animateMotion path="M0,0 0 135" dur="1.5s" repeatCount="indefinite" />
     </circle>
@@ -119,7 +121,7 @@
     <circle id="car_circle1" r="7" cx="300" cy="300" fill="#78828C" visibility="hidden">
         <animateMotion path="M0,0 -120 -100" dur="1.5s" repeatCount="indefinite" />
     </circle>
-    
+
 
     <use xlink:href="#g_inverter" id="inv_group" x="180" y="200" visibility="hidden"/>
     <use xlink:href="#g_production" id="prod_group" x="180" y="45" visibility="hidden"/>
@@ -128,7 +130,7 @@
     <use xlink:href="#g_house" id="house_group" x="300" y="125" visibility="hidden"/>
     <use xlink:href="#g_car" id="car_group" x="300" y="300" visibility="hidden"/>
 
-    <text id="prod_text_watt" x="180" y="65" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">--</text>    
+    <text id="prod_text_watt" x="180" y="65" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">--</text>
     <text id="grid_text_watt" x="45" y="80" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C" >--- W</text>
     <text id="house_text_watt" x="300" y="80" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C" >--- W</text>
     <text id="bat_text_watt" x="45" y="255" visibility="hidden" text-anchor="middle" font-size="small" fill="#03152C">-- W</text>
@@ -138,31 +140,47 @@
 </svg>
 
 <script type="text/javascript">
-    
+
     (function(){
-        //define Array of Objects which values are gotten from server
-        let objIDs = [
-        'javascript.0.solar.current_production',
-        'javascript.0.solar.toBattery',
-        'modbus.0.holdingRegisters.200.40087_W',
-        'javascript.0.solar.curConsumptionHouse',
-        'mqtt.0.wattpilot.properties.nrg_ptotal.state',
-        'vw-connect.0.xxxxxxxxxxxxx.status.charging.status.battery.stateOfChargeInPercent',
-        'modbus.0.holdingRegisters.1.40351_ChaState',
-        'modbus.0.holdingRegisters.1.40354_ChaSt'
-        ];
-        
+
+        // ── Car Configuration ───────────────────────────────────────────────────
+        // Add / edit cars here. The key (e.g. 'enyaq') must match the value written
+        // into stateIds.activeCar by your ioBroker JS script.
+        const carConfig = {
+            enyaq: {
+                name:  'Enyaq',
+                image: '/vis.0/Strom/img/enyaq.png',
+                socId: 'vw-connect.0.TMBJC7NY9NF038592.status.charging.status.battery.stateOfChargeInPercent',
+                color: '#78828C'
+            },
+            id3: {
+                name:  'id3',
+                image: '/vis.0/Strom/img/id3.png',
+                socId: 'vw-connect.1.WVWZZZE1ZPP028522.status.batteryStatus.currentSOC_pct',
+                color: '#78828C'
+            }
+        };
+
+        // ── ioBroker State IDs ──────────────────────────────────────────────────
+        // All state IDs in one place — no more index-based magic.
+        // activeCar must contain a key from carConfig (e.g. 'enyaq' or 'id3').
+        // Set it via an ioBroker JS script based on wallbox connection / RFID / manual switch.
+        const stateIds = {
+            prod:      'javascript.0.solar.current_production',
+            bat:       'javascript.0.solar.toBattery',
+            grid:      'modbus.0.holdingRegisters.200.40087_W',
+            house:     'javascript.0.solar.curConsumptionHouse',
+            carPower:  'fronius-wattpilot.0.power',
+            batSoc:    'modbus.0.holdingRegisters.1.40351_ChaState',
+            batStatus: 'modbus.0.holdingRegisters.1.40354_ChaSt',
+            activeCar: 'javascript.0.car.pluggedCar'
+        };
+
         var allFlowObjects = ['inv', 'prod', 'grid', 'bat', 'house', 'car'];
-        var flowValues = { //initialize values used in the widget
-            "prod": 0,
-            "bat": 0,
-            "grid": 0,
-            "house": 0,
-            "car": 0,
-            "carChSt": 0,
-            "batChSt": 0,
-            "batStatus": 0
-        }    
+        var flowValues = {
+            prod: 0, bat: 0, grid: 0, house: 0, car: 0,
+            carChSt: 0, batChSt: 0, batStatus: 0
+        };
 
         //define Widget-Parameters - described in GitHub Wiki
         var wP = {};
@@ -179,7 +197,7 @@
             "houseX": 300,
             "houseY": 125,
             "carX": 300,
-            "carY": 300,           
+            "carY": 300,
         };
         wP.textPosDeltas = {
             "prod_text_watt": [0, 20],
@@ -194,14 +212,41 @@
             "grid": 12000,
             "bat": 8000,
             "house": 10000,
-            "car": 11000
+            "car": 11
         };
         wP.pathes = {};
         calculatePaths();
 
         /**
+         * Builds a flat array of all ioBroker state IDs needed for a single getStates() call.
+         * Includes the fixed states (stateIds) plus each car's SoC state ID.
+         *
+         * @return string[]
+         */
+        function buildFetchIds() {
+            var ids = Object.values(stateIds);
+            Object.values(carConfig).forEach(function(car) {
+                if (ids.indexOf(car.socId) === -1) ids.push(car.socId);
+            });
+            return ids;
+        }
+
+        /**
+         * Updates the car SVG image and circle stroke color to match the currently active car.
+         * Called every refresh cycle so a car switch is reflected within 2 seconds.
+         *
+         * @param car   Object  entry from carConfig
+         */
+        function updateCarDisplay(car) {
+            var img = document.getElementById('carImage');
+            if (img) img.setAttribute('href', car.image);
+            var circle = document.getElementById('cCar');
+            if (circle) circle.setAttribute('stroke', car.color);
+        }
+
+        /**
          * Calculates the Animation Pathes for the given Flow-relevant Objects
-         * Makes use of the Positions ov the Main-SVG-Objects and assumes that each Path ends
+         * Makes use of the Positions of the Main-SVG-Objects and assumes that each Path ends
          * within the Inverter.
          * Result is for each Object a current path (.cur), a path for positive values (.pos) and one for negative values (.neg) e.g. 'M0,0 45 180'
          */
@@ -211,21 +256,21 @@
                 wP.pathes[type] = {};
                 wP.pathes[type].cur = "M0,0 " + (wP.pos.invX - wP.pos[type + 'X']).toString() + ' ' + (wP.pos.invY  - wP.pos[type + 'Y']).toString();
                 wP.pathes[type].pos = "M0,0 " + (wP.pos.invX - wP.pos[type + 'X']).toString() + ' ' + (wP.pos.invY - wP.pos[type + 'Y']).toString();
-                wP.pathes[type].neg = "M" + (wP.pos.invX - wP.pos[type + 'X']).toString() + ',' + (wP.pos.invY - wP.pos[type + 'Y']).toString() + ' 0 0';  
+                wP.pathes[type].neg = "M" + (wP.pos.invX - wP.pos[type + 'X']).toString() + ',' + (wP.pos.invY - wP.pos[type + 'Y']).toString() + ' 0 0';
             }
         }
 
         /**
-         * Used to initialize the SVG-Objects withing the Widget. This is done by setting x/y Attributes in the Objects by DOM.
+         * Used to initialize the SVG-Objects within the Widget. This is done by setting x/y Attributes in the Objects by DOM.
          */
         function initSVG(){
             //Position and unhide SVG-Object-Groups
-            for(var i=0; i < allFlowObjects.length; i++){ 
+            for(var i=0; i < allFlowObjects.length; i++){
                 var el = allFlowObjects[i];
                 document.getElementById(el + '_group').setAttribute("x", wP.pos[el+"X"]);
                 document.getElementById(el + '_group').setAttribute("y", wP.pos[el+"Y"]);
                 document.getElementById(el + '_group').setAttribute("visibility", "visible");
-            } 
+            }
 
             //run through Loop without Inverter-Object
             for(var i=1; i < allFlowObjects.length; i++){ // i = 1 because no line for Inverter
@@ -236,7 +281,7 @@
                 document.getElementById(el + '_line').setAttribute("x2", wP.pos.invX);
                 document.getElementById(el + '_line').setAttribute("y2", wP.pos.invY);
                 document.getElementById(el + '_line').setAttribute("visibility", "visible");
-            
+
                 //Position and unhide given Set 1 of AnimationCircles - others will be autogenerated afterwards
                 document.getElementById(el + '_circle1').setAttribute("cx", wP.pos[el+"X"]);
                 document.getElementById(el + '_circle1').setAttribute("cy", wP.pos[el+"Y"]);
@@ -249,100 +294,91 @@
                 if(el == 'car'){
                     document.getElementById(el + '_text_perc').setAttribute("x", wP.pos[el+"X"] + wP.textPosDeltas[el + '_text_perc'][0]);
                     document.getElementById(el + '_text_perc').setAttribute("y", wP.pos[el+"Y"] + wP.textPosDeltas[el + '_text_perc'][1]);
-                    document.getElementById(el + '_text_perc').setAttribute("visibility", "visible");  
+                    document.getElementById(el + '_text_perc').setAttribute("visibility", "visible");
                 }
             }
-           
+
         }
-        
+
         /**
-         * Function gets the Values for the Data-Points given in Array objIDs. This is a function which can only be used when the widget
-         * is living in ioBroker VIS.
-         * It is getting the Values and then recalculating Pathes, Circle Sizes and setting Text-SVGs
+         * Fetches all ioBroker states in a single call and updates flowValues.
+         * Active car is resolved from stateIds.activeCar → carConfig key.
+         * Falls back to the first entry in carConfig if the state is not set yet.
          */
         function getServerValues(){
-            servConn.getStates(objIDs, (error, states) => {
-                //console.log(states);
-                for(var i=0; i < objIDs.length; i++){
-                    //console.log(i + ' - ' + objIDs[i] + ' - ' + states[objIDs[i]].val);
-                    switch(i) {
-                        case 0:
-                            flowValues.prod = +states[objIDs[i]].val;
-                            break;
-                        case 1:
-                            flowValues.bat = +Math.round(states[objIDs[i]].val);
-                            break;
-                        case 2:
-                            flowValues.grid = +Math.round(states[objIDs[i]].val) * -1;
-                            break;
-                        case 3:
-                            flowValues.house = +Math.round(states[objIDs[i]].val);
-                            break;
-                        case 4:
-                            flowValues.car = +Math.round(states[objIDs[i]].val);
-                            break;
-                        case 5:
-                            flowValues.carChSt = states[objIDs[i]].val;
-                            break;
-                        case 6:
-                            flowValues.batChSt = states[objIDs[i]].val;
-                            break;
-                        case 7:
-                            flowValues.batStatus = states[objIDs[i]].val;
-                            break;
-                    }
-                 }
-                 
-                 if(flowValues.batStatus == 1) {flowValues.bat = 0}; //if Battery Off then force value for bat to be 0
+            servConn.getStates(buildFetchIds(), function(error, states) {
+
+                // ── Fixed states (named, not index-based) ──
+                flowValues.prod      = +states[stateIds.prod].val;
+                flowValues.bat       = +Math.round(states[stateIds.bat].val);
+                flowValues.grid      = +Math.round(states[stateIds.grid].val) * -1;
+                flowValues.house     = +Math.round(states[stateIds.house].val);
+                flowValues.car       = +states[stateIds.carPower].val;
+                flowValues.batChSt   = states[stateIds.batSoc].val;
+                flowValues.batStatus = states[stateIds.batStatus].val;
+
+                // ── Active car resolution ──────────────────────────────────────
+                var activeKey = (states[stateIds.activeCar] && states[stateIds.activeCar].val)
+                    ? states[stateIds.activeCar].val
+                    : Object.keys(carConfig)[0]; // fallback to first car if state not set yet
+
+                var activeCar = carConfig[activeKey] || Object.values(carConfig)[0];
+                var socState = states[activeCar.socId];
+                flowValues.carChSt = (socState && socState.val != null) ? socState.val : 0;
+
+                updateCarDisplay(activeCar);
+
+                // ── Guard: force bat flow to 0 when battery is offline ────────
+                if (flowValues.batStatus == 1) flowValues.bat = 0;
 
                 setPathes();
                 setCircleSizeAndSpeed('prod', flowValues.prod, wP.pathes.prod.cur);
-                setCircleSizeAndSpeed('bat', flowValues.bat, wP.pathes.bat.cur);
+                setCircleSizeAndSpeed('bat',  flowValues.bat,  wP.pathes.bat.cur);
                 setCircleSizeAndSpeed('house', flowValues.house, wP.pathes.house.cur);
-                setCircleSizeAndSpeed('car', flowValues.car, wP.pathes.car.cur);
+                setCircleSizeAndSpeed('car',  flowValues.car,  wP.pathes.car.cur);
                 setCircleSizeAndSpeed('grid', flowValues.grid, wP.pathes.grid.cur);
                 setTextValues();
                 setBatterySVG(flowValues.batChSt);
             });
         }
-        
+
         /**
          * Function used to clone the Animation-Circle-SVGs directly into DOM. Needed because the SVG copying like <use> write the copies into the "Shadow-Dom".
          * The Problem then is, that we are not able to edit for example then AnimationPath via DOM anymore.
          * This Function is called only once, when the Widget is intilaized.
-         * 
+         *
          *  @number integer number of circles which should be created per FlowLine (currently set to 3 and not changeable)
-         */ 
+         */
         function addAnimCircles(number){
             for(var i=1;i<allFlowObjects.length;i++){
                 var type = allFlowObjects[i];
                 var el = document.getElementById(type + '_circle1');
-                
+
                 for(z=2;z<=number;z++){
                     var elCopy = el.cloneNode(true);
                     el.id = type + '_circle' + z.toString();
-                    el.parentNode.insertBefore(elCopy, el.nextSibling); 
+                    el.parentNode.insertBefore(elCopy, el.nextSibling);
                 }
             }
-            
-        }       
-    
+
+        }
+
         /**
-         * Helper-Function used to calculate the Size, Speed (duartion) and begin-Time of the circles running on the FlowLine. Currently delivering three different sizes,
+         * Helper-Function used to calculate the Size, Speed (duration) and begin-Time of the circles running on the FlowLine. Currently delivering three different sizes,
          * depending on Flows maximum Value and Flows current Value
-         * 
+         *
          *  @type   string  Type of Flow (prod, bat, grid...)
-         *  @value  number  current Value gotten from the server for the sepicific Flow
-         * 
+         *  @value  number  current Value gotten from the server for the specific Flow
+         *
          *  @return Object  Object with circle size, duration for animation and begin-Threshold
-         */ 
+         */
         function calcCircleSize(type, value){
             value = Math.abs(value);
             var maxSize = 10;
             var maxVal = wP.maxVals[type];
             var z = 2
             var res = {};
-            
+
             //find thresholds for circle Sizes - currently 3 different sizes
             //also the duration is calculated assuming we have 3 circles running per line
             z = Math.round(value/maxVal*10); //
@@ -354,79 +390,80 @@
                 res.size = z;
                 res.duration = 1.5;
                 res.begin = 0.5;
-            }  else if(z<=10){
+            } else if(z<=10){
                 res.size = z;
                 res.duration = 1;
                 res.begin = 0.33;
-            } else if(z>10){ //just save my ass :)
+            } else { // covers z>10 and NaN (NaN comparisons always return false)
                 res.size = 10;
                 res.duration = 1;
                 res.begin = 0.33;
-            } 
-    
-            return res; 
+            }
+
+            return res;
         }
-        
+
         /**
          * Function Used to set new CircleSize, Animation-Path and Speed for the Flow-Animation
-         * 
+         *
          *  @type   string  Type of Flow (prod, bat, grid...)
-         *  @value  number  current Value gotten from the server for the sepicific Flow
+         *  @value  number  current Value gotten from the server for the specific Flow
          *  @path   string  recalculated Path (by Value) for the given Flow (Direction or OFF)
-         * 
+         *
          */
         function setCircleSizeAndSpeed(type, value, path){
             var opt = calcCircleSize(type, value);
-            var animationElement = opt.aniElement;
-            //var circleElement = opt.circleElement;
             var circleElement = type + '_circle';
             var beg = 0;
             for(var i=1;i<=3;i++){
-                document.getElementById(circleElement + i.toString()).setAttribute("r", opt.size); 
+                document.getElementById(circleElement + i.toString()).setAttribute("r", opt.size);
                 document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("path", path);
                 document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("dur", opt.duration + 's');
                 document.getElementById(circleElement + i.toString()).getElementsByTagName('animateMotion')[0].setAttribute("begin", beg + 's');
-                
+
                 beg = opt.begin * i;
             }
         }
-        
+
         /**
-         * Function used to format the given Watt-Values. If more than 1000W then it is deliver kW
-         * 
+         * Function used to format the given Watt-Values. If more than 1000W then it delivers kW
+         *
          * @val     number  Value in Watt
-         * 
+         *
          * @return  string  Value as String in Watt or kW
          */
-        function formatWattNumber(val){
-            
+        function formatWattNumber(val, kwhOnly){
+
             function precisionRound(number, precision) {
                 var factor = Math.pow(10, precision);
                 return Math.round(number * factor) / factor;
             }
-            
+
             var res = {};
             res.val = 0;
-            res.unit = 'W';
-            
+            res.unit = 'kW';
+
             if (val > 1000){
                res.val = precisionRound(val/1000, 2);
                res.unit = 'kW';
+            } else if(kwhOnly){
+                res.val = precisionRound(val,2);
+                res.unit = 'kW';
             } else {
                 res.val = val;
                 res.unit = 'W';
             }
-            
+
             return res;
         }
-        
+
         /**
          * Function to set the Text-Values into the Text-SVG-Objects (Production Watt, Battery Watt, Grid Watt...)
          * New Values are set directly into the Text-SVG-Object via DOM
          */
         function setTextValues(){
             var objWN = {};
-            
+
             objWN = formatWattNumber(flowValues.prod);
             document.getElementById('prod_text_watt').textContent = objWN.val + ' ' + objWN.unit;
             objWN = formatWattNumber(flowValues.grid);
@@ -435,14 +472,14 @@
             document.getElementById('bat_text_watt').textContent = objWN.val + ' ' + objWN.unit;
             objWN = formatWattNumber(flowValues.house);
             document.getElementById('house_text_watt').textContent = objWN.val + ' ' + objWN.unit;
-            objWN = formatWattNumber(flowValues.car);
+            objWN = formatWattNumber(flowValues.car, true);
             document.getElementById('car_text_watt').textContent = objWN.val + ' ' + objWN.unit;
             document.getElementById('car_text_perc').textContent = flowValues.carChSt.toString() + "%";
             document.getElementById('percBat').textContent = flowValues.batChSt.toString() + "%";
         }
-        
+
         /**
-         * Function to calculate and repaint the Battery-Cells in different Colors depeind on Battery Charge-Stae Value
+         * Function to calculate and repaint the Battery-Cells in different Colors depending on Battery Charge-State Value
          */
         function setBatterySVG(batVal){
             let colEmpty = '#F3F3F3';
@@ -450,16 +487,16 @@
             let colOrange = '#ffdb78';
             let coldDarkOrange = '#ff5e08';
             let colRed = '#bd1b02';
-    
+
             var col = colEmpty;
             var nrSeg = 1;
-            
+
             if (flowValues.batStatus == 1){
-                document.getElementById('batOnOff').setAttribute("fill", colRed);   
+                document.getElementById('batOnOff').setAttribute("fill", colRed);
             } else {
                 document.getElementById('batOnOff').setAttribute("fill", '#00cc00');
             }
-            
+
             if(batVal < 10){
                 col = colRed;
                 nrSeg = 0;
@@ -471,9 +508,9 @@
                 nrSeg = 2;
             } else {
                 col = colGreen;
-                nrSeg = 3;            
+                nrSeg = 3;
             }
-            
+
             for(var i=0; i<=nrSeg; i++){
                 if(i<=nrSeg){
                     document.getElementById('batE' + i).setAttribute("fill", col);
@@ -481,45 +518,42 @@
                     document.getElementById('batE' + i).setAttribute("fill", colEmpty);
                 }
             }
-            
+
         }
-        
+
         /**
          * Function to set the recalculated Animation-Pathes. Basically it changes the Direction of how the Circles are running on the FlowLine
          * depending on the Flow-Value.
-         * The result is written in the wP-Object and then used within Function/FunctionCall for setCircleSizeAndSpeed() 
+         * The result is written in the wP-Object and then used within Function/FunctionCall for setCircleSizeAndSpeed()
          */
         function setPathes(){
             for (var i=1;i<allFlowObjects.length;i++){
                 var typ = allFlowObjects[i];
                 var val = flowValues[typ];
-                
+
                 if(typ == 'prod'){ //if it's Value of Production then we need to negotiate to have correct direction
                     val = val * -1;
                 }
-                
+
                 if(val == 0) {
                     wP.pathes[typ].cur = "M0,0";
                 } else if (val < 0) {
                     wP.pathes[typ].cur = wP.pathes[typ].pos;
                 } else {
                     wP.pathes[typ].cur = wP.pathes[typ].neg;
-                }   
-
-                //console.log('Path of ' + typ + ': ' + wP.pathes[typ].pos);
+                }
             }
-    
         }
 
         /**
-         * 
-         *  Start of Scritp Calls
-         * 
+         *
+         *  Start of Script Calls
+         *
          */
-        initSVG(); //unhide and plave SVG-Objects by given Values in Variable Definition wP
-        addAnimCircles(wP.nrAnimCircles); //create copies of circle-SVGs (needed because <use> creates copies in Shadow Dom which is not accessable)
-        getServerValues(); //"start widget" one time manually
-        setInterval(getServerValues, 2000); //update widget every 2 seconds
+        initSVG();                          // unhide and place SVG-Objects
+        addAnimCircles(wP.nrAnimCircles);   // clone circle SVGs into real DOM (avoids shadow-DOM limitation of <use>)
+        getServerValues();                  // initial fetch
+        setInterval(getServerValues, 2000); // refresh every 2 seconds
     })();
-    
+
 </script>
