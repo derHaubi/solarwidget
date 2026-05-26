@@ -82,15 +82,20 @@
             />
         </g>
 
+        <clipPath id="carCircleClip">
+            <circle cx="0" cy="0" r="40"/>
+        </clipPath>
+
         <g id="g_car">
             <!-- Image first = behind; circle second = on top as a ring frame -->
             <image id="carImage"
             href="/vis.0/Strom/img/enyaq.png"
-            x="-40"
+            x="-35"
             y="-30"
-            height="80"
-            width="80"
-            preserveAspectRatio="xMinYMin meet"
+            width="70"
+            height="60"
+            preserveAspectRatio="xMidYMid meet"
+            clip-path="url(#carCircleClip)"
             />
             <circle id="cCar" r="40" stroke="#78828C" fill="none"></circle>
         </g>
@@ -101,6 +106,14 @@
      <line id="bat_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      <line id="house_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
      <line id="car_line" class="lineElement" x1="10" y1="10" x2="150" y2="150" visibility="hidden"></line>
+
+     <!-- broken-connection elements for car (positioned by script) -->
+     <line id="car_line_b1" class="lineElement" x1="0" y1="0" x2="0" y2="0" visibility="hidden"/>
+     <line id="car_line_b2" class="lineElement" x1="0" y1="0" x2="0" y2="0" visibility="hidden"/>
+     <circle id="car_gap_c1" r="5" fill="#bfbfbf" stroke="#78828C" visibility="hidden"/>
+     <circle id="car_gap_c2" r="5" fill="#bfbfbf" stroke="#78828C" visibility="hidden"/>
+     <path id="car_spark_1" stroke="#ff6600" stroke-width="1.5" fill="none" visibility="hidden"/>
+     <path id="car_spark_2" stroke="#ff6600" stroke-width="1.5" fill="none" visibility="hidden"/>
 
      <circle id="prod_circle1" r="7" cx="180" cy="45" fill="#E0BA34" visibility="hidden">
         <animateMotion path="M0,0 0 135" dur="1.5s" repeatCount="indefinite" />
@@ -170,16 +183,17 @@
             bat:       'javascript.0.solar.toBattery',
             grid:      'modbus.0.holdingRegisters.200.40087_W',
             house:     'javascript.0.solar.curConsumptionHouse',
-            carPower:  'fronius-wattpilot.0.power',
-            batSoc:    'modbus.0.holdingRegisters.1.40351_ChaState',
-            batStatus: 'modbus.0.holdingRegisters.1.40354_ChaSt',
-            activeCar: 'javascript.0.car.pluggedCar'
+            carPower:     'fronius-wattpilot.0.power',
+            carConnected: 'fronius-wattpilot.0.carConnected',
+            batSoc:       'modbus.0.holdingRegisters.1.40351_ChaState',
+            batStatus:    'modbus.0.holdingRegisters.1.40354_ChaSt',
+            activeCar:    'javascript.0.car.pluggedCar'
         };
 
         var allFlowObjects = ['inv', 'prod', 'grid', 'bat', 'house', 'car'];
         var flowValues = {
             prod: 0, bat: 0, grid: 0, house: 0, car: 0,
-            carChSt: 0, batChSt: 0, batStatus: 0
+            carChSt: 0, batChSt: 0, batStatus: 0, carConnected: true
         };
 
         //define Widget-Parameters - described in GitHub Wiki
@@ -214,6 +228,14 @@
             "house": 10000,
             "car": 11
         };
+        wP.radii = {
+            prod:  40,
+            grid:  40,
+            bat:   40,
+            house: 40,
+            car:   40,
+            inv:   30
+        };
         wP.pathes = {};
         calculatePaths();
 
@@ -239,9 +261,80 @@
          */
         function updateCarDisplay(car) {
             var img = document.getElementById('carImage');
-            if (img) img.setAttribute('href', car.image);
+            if (img) img.setAttribute('href', flowValues.carConnected ? car.image : '/vis.0/Strom/img/parkplatz_leer.png');
             var circle = document.getElementById('cCar');
             if (circle) circle.setAttribute('stroke', car.color);
+        }
+
+        /**
+         * Shows the connected or broken-cable visual for the car line.
+         * When disconnected: hides car_line and animated circles, positions and shows
+         * the two broken cable halves, gap circles and spark chevrons along the diagonal.
+         */
+        function showCarConnectionState(connected) {
+            var linVis = connected ? 'visible' : 'hidden';
+            var brkVis = connected ? 'hidden'  : 'visible';
+
+            document.getElementById('car_line').setAttribute('visibility', linVis);
+            document.getElementById('car_text_perc').setAttribute('visibility', linVis);
+            for (var i = 1; i <= wP.nrAnimCircles; i++)
+                document.getElementById('car_circle' + i).setAttribute('visibility', linVis);
+
+            document.getElementById('car_line_b1').setAttribute('visibility', brkVis);
+            document.getElementById('car_line_b2').setAttribute('visibility', brkVis);
+            document.getElementById('car_gap_c1').setAttribute('visibility',  brkVis);
+            document.getElementById('car_gap_c2').setAttribute('visibility',  brkVis);
+            document.getElementById('car_spark_1').setAttribute('visibility', brkVis);
+            document.getElementById('car_spark_2').setAttribute('visibility', brkVis);
+
+            if (!connected) {
+                var cx = wP.pos.carX, cy = wP.pos.carY;
+                var ix = wP.pos.invX, iy = wP.pos.invY;
+                var dx = ix - cx, dy = iy - cy;
+                var len = Math.sqrt(dx * dx + dy * dy);
+                var ux = dx / len, uy = dy / len; // unit vec car → inverter
+                var nx = -uy,  ny =  ux;           // perpendicular
+
+                // cable endpoints stop at circle edges
+                var sx = cx + wP.radii.car * ux, sy = cy + wP.radii.car * uy;
+                var ex = ix - wP.radii.inv * ux, ey = iy - wP.radii.inv * uy;
+
+                // gap centred on the midpoint of the visible cable
+                var mx = (sx + ex) / 2, my = (sy + ey) / 2;
+                var gh = 15; // gap half-width along line
+                var g1x = mx - gh * ux, g1y = my - gh * uy; // gap end toward car
+                var g2x = mx + gh * ux, g2y = my + gh * uy; // gap end toward inverter
+
+                // broken cable halves
+                document.getElementById('car_line_b1').setAttribute('x1', sx.toFixed(1));
+                document.getElementById('car_line_b1').setAttribute('y1', sy.toFixed(1));
+                document.getElementById('car_line_b1').setAttribute('x2', g1x.toFixed(1));
+                document.getElementById('car_line_b1').setAttribute('y2', g1y.toFixed(1));
+
+                document.getElementById('car_line_b2').setAttribute('x1', g2x.toFixed(1));
+                document.getElementById('car_line_b2').setAttribute('y1', g2y.toFixed(1));
+                document.getElementById('car_line_b2').setAttribute('x2', ex.toFixed(1));
+                document.getElementById('car_line_b2').setAttribute('y2', ey.toFixed(1));
+
+                // gap endpoint circles
+                document.getElementById('car_gap_c1').setAttribute('cx', g1x.toFixed(1));
+                document.getElementById('car_gap_c1').setAttribute('cy', g1y.toFixed(1));
+                document.getElementById('car_gap_c2').setAttribute('cx', g2x.toFixed(1));
+                document.getElementById('car_gap_c2').setAttribute('cy', g2y.toFixed(1));
+
+                // spark chevrons (><) centred in gap, oriented along the diagonal
+                var s = 8, o = 7.5;
+                // chevron on car-side: tip points toward inverter
+                document.getElementById('car_spark_1').setAttribute('d',
+                    'M ' + (mx - o*ux + s*nx).toFixed(1) + ',' + (my - o*uy + s*ny).toFixed(1) +
+                    ' L ' + (mx - o*ux + s*ux).toFixed(1) + ',' + (my - o*uy + s*uy).toFixed(1) +
+                    ' L ' + (mx - o*ux - s*nx).toFixed(1) + ',' + (my - o*uy - s*ny).toFixed(1));
+                // chevron on inverter-side: tip points toward car
+                document.getElementById('car_spark_2').setAttribute('d',
+                    'M ' + (mx + o*ux + s*nx).toFixed(1) + ',' + (my + o*uy + s*ny).toFixed(1) +
+                    ' L ' + (mx + o*ux - s*ux).toFixed(1) + ',' + (my + o*uy - s*uy).toFixed(1) +
+                    ' L ' + (mx + o*ux - s*nx).toFixed(1) + ',' + (my + o*uy - s*ny).toFixed(1));
+            }
         }
 
         /**
@@ -275,7 +368,7 @@
             //run through Loop without Inverter-Object
             for(var i=1; i < allFlowObjects.length; i++){ // i = 1 because no line for Inverter
                 var el = allFlowObjects[i];
-                //Position and unhide Animation Lines
+                //Position and unhide Animation Lines (center to center; circles paint under icon groups via SVG z-order)
                 document.getElementById(el + '_line').setAttribute("x1", wP.pos[el+"X"]);
                 document.getElementById(el + '_line').setAttribute("y1", wP.pos[el+"Y"]);
                 document.getElementById(el + '_line').setAttribute("x2", wP.pos.invX);
@@ -317,6 +410,10 @@
                 flowValues.batChSt   = states[stateIds.batSoc].val;
                 flowValues.batStatus = states[stateIds.batStatus].val;
 
+                var connVal = (states[stateIds.carConnected] && states[stateIds.carConnected].val)
+                    ? states[stateIds.carConnected].val.toString().toLowerCase() : 'idle';
+                flowValues.carConnected = connVal !== 'idle';
+
                 // ── Active car resolution ──────────────────────────────────────
                 var activeKey = (states[stateIds.activeCar] && states[stateIds.activeCar].val)
                     ? states[stateIds.activeCar].val
@@ -335,10 +432,12 @@
                 setCircleSizeAndSpeed('prod', flowValues.prod, wP.pathes.prod.cur);
                 setCircleSizeAndSpeed('bat',  flowValues.bat,  wP.pathes.bat.cur);
                 setCircleSizeAndSpeed('house', flowValues.house, wP.pathes.house.cur);
+                if (!flowValues.carConnected) wP.pathes.car.cur = 'M0,0';
                 setCircleSizeAndSpeed('car',  flowValues.car,  wP.pathes.car.cur);
                 setCircleSizeAndSpeed('grid', flowValues.grid, wP.pathes.grid.cur);
                 setTextValues();
                 setBatterySVG(flowValues.batChSt);
+                showCarConnectionState(flowValues.carConnected);
             });
         }
 

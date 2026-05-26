@@ -21,7 +21,7 @@
     // ── Update car image ────────────────────────────────────────────────────────
     function updateCarDisplay() {
         var img = document.getElementById('carDetailImage');
-        if (img) img.setAttribute('href', carImage);
+        if (img) img.setAttribute('href', carConnected ? carImage : '/vis.0/Strom/img/parkplatz_leer.png');
     }
 
     // ── Animation helpers ───────────────────────────────────────────────────────
@@ -68,15 +68,25 @@
     function showConnectionState() {
         var ref = carConnected ? '#carConnectionConnected' : '#carConnectionBroken';
         document.getElementById('carConnection').setAttribute('xlink:href', ref);
+        // hide kW and circles when disconnected; battery stays visible but resets to empty
+        var vis = carConnected ? 'visible' : 'hidden';
+        document.getElementById('carWattCar').setAttribute('visibility', vis);
+        for (var i = 1; i <= 3; i++)
+            document.getElementById('car_cC' + i).setAttribute('visibility', vis);
+        if (!carConnected) {
+            document.getElementById('carPercBat').textContent = '-- %';
+            for (var i = 0; i <= 3; i++)
+                document.getElementById('carBatE' + i).setAttribute('fill', '#F3F3F3');
+        }
     }
 
     // ── Run ─────────────────────────────────────────────────────────────────────
-    var pathCar = (carCar > 0) ? 'M0,0 250 0' : 'M0,0';
+    var pathCar = (carCar > 0 && carConnected) ? 'M40,0 215 0' : 'M0,0';
 
     updateCarDisplay();
-    showConnectionState();
     setCarCircleSizeAndSpeed(carCar, pathCar);
     setCarTextValues();
     setCarBatterySVG(carCarChSt);
+    showConnectionState(); // runs last so it can overwrite text/battery when disconnected
 
 </script>
